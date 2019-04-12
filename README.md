@@ -8,8 +8,7 @@ Decorate your pytest suite with RSpec-inspired markers `describe`, `context` and
 
 ## Install
 
-Pytest-it is available on PyPi:`pip install pytest-it`.
-
+Pytest-it is available on PyPi: `pip install pytest-it`.
 
 ## Background
 
@@ -18,13 +17,13 @@ that for some complex systems, it can be hard to clearly communicate the intent
 of our tests using the standard `test_module.py::TestClass::test_function`
 structure.
 
-This is a problem that can be solved by BDD testing frameworks (eg. Behave,
-Mambda, Rspec), but it's not always desirable to migrate existing test suites
+This is a problem that can be solved by BDD testing frameworks (eg. [Behave](https://github.com/behave/behave),
+[Mamba](https://github.com/nestorsalceda/mamba), [Rspec](http://rspec.info), but it's not always desirable to migrate existing test suites
 to a new framework.
 
 There are some pytest plugins that attempt to bridge this gap, by providing
-alternative ways to structure the tests (eg. pytest-describe, pytest-bdd), or
-altering the test report output (eg. pytest-testdox, pytest-pspec).
+alternative ways to structure the tests (eg. [pytest-describe](https://github.com/ropez/pytest-describe), [pytest-bdd](https://github.com/pytest-dev/pytest-bdd)), or
+altering the test report output (eg. [pytest-testdox](https://github.com/renanivo/pytest-testdox), [pytest-pspec](https://github.com/gowtham-sai/pytest-pspec)).
 
 We have taken a similar approach to `pytest-testdox`, by providing pytest
 markers that can describe the test output. `pytest-it` supports a few other
