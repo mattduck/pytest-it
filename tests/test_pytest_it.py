@@ -5,10 +5,10 @@ import pytest
 from pytest import mark as m
 
 
-pytestmark = [pytest.mark.describe("Foobar")]
+pytestmark = [pytest.mark.describe("pytest-it")]
 
 
-@m.describe("The basic configuration")
+@m.describe("The plugin integration with pytest")
 class TestSanity(object):
 
     BASIC_PYTEST_TEST_CODE = """
@@ -92,7 +92,7 @@ class TestContext(object):
         pytest.skip("NotImplemented")
 
 
-@m.it("It handles report indentation for arbitrary Describe and Context nesting")
+@m.it("Handles indentation for arbitrary Describe and Context nesting")
 def test_deep_nesting_of_context_and_describe():
     pytest.skip("NotImplemented")
 
