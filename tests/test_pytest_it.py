@@ -66,6 +66,25 @@ class TestSanity(object):
         assert result.ret == 0
 
 
+@m.describe("The --collect-only behaviour")
+class TestCollection(object):
+    @m.it("Displays all tests without the result status")
+    def test_no_result_status_is_used(self, testdir):
+        testdir.makepyfile("""
+            import pytest
+
+            @pytest.mark.it("Does something")
+            def test_it_does_something_a():
+                assert True
+
+            @pytest.mark.it("Does something else")
+            def test_it_does_something_b():
+                assert True
+        """)
+        result = testdir.runpytest("--it-no-color", "--collect-only")
+        result.stdout.fnmatch_lines(["*- It: Does something*", "*- It: Does something else*"])
+
+
 @m.describe("The @pytest.mark.describe marker")
 class TestDescribe(object):
     @m.it("Displays a '- Describe: ' block matching the decorator")
@@ -134,8 +153,18 @@ class TestContext(object):
         )
 
     @m.it("Ignores a @pytest.mark.context decorator that has no argument")
-    def test_no_argument(self):
-        pytest.skip("NotImplemented")
+    def test_no_argument(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            @pytest.mark.context
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        assert "context" not in str(result.stdout).lower()
 
 
 @m.it("Handles indentation for arbitrary Describe and Context nesting")
@@ -205,9 +234,22 @@ class TestIt(object):
         result = testdir.runpytest("--it-no-color")
         result.stdout.fnmatch_lines(["*- s *"])
 
-    @m.it("Displays the pytest ID for test parameters at the end of the test")
-    def test_param(self):
-        pytest.skip("NotImplemented")
+    @m.it("Displays the pytest ID for parameterised tests")
+    def test_param(self, testdir):
+        testdir.makepyfile("""
+            import pytest
+
+            @pytest.mark.parametrize("param", ["a", "b", "c"])
+            @pytest.mark.it("Does something")
+            def test_something(param):
+                assert True
+        """)
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines([
+            "*- ✓ It: Does something - [a*",
+            "*- ✓ It: Does something - [b*",
+            "*- ✓ It: Does something - [c*",
+        ])
 
     @m.context("When @pytest.mark.it is used")
     @m.it("Displays an '- It: ' block matching the decorator")
@@ -226,7 +268,7 @@ class TestIt(object):
 
     @m.context("When @pytest.mark.it is used")
     @m.context("When -v is higher than 0")
-    @m.parametrize("v", [(1, 2, 3)])
+    @m.parametrize("v", [1, 2, 3])
     @m.it("Displays the full module::class::function prefix to the test")
     def test_verbose(self, testdir, v):
         testdir.makepyfile(
@@ -239,39 +281,65 @@ class TestIt(object):
         """
         )
         result = testdir.runpytest("--it-no-color", "-" + ("v" * v))
-        result.stdout.fnmatch_lines(["*- ✓ It: Does something*"])
-        raise NotImplemented
+        result.stdout.fnmatch_lines(["*- ✓ It: test_verbose.py::test_something - Does something*"])
 
     @m.context("When @pytest.mark.it is not used")
     @m.it("Displays the test function name")
-    def test_no_argument(self):
-        pytest.skip("NotImplemented")
+    def test_no_argument(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- ✓ test_something*"])
+
+    @m.context("When @pytest.mark.it is not used")
+    @m.it("Displays the test function name")
+    def test_no_argument(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- ✓ test_something*"])
 
     @m.context("When @pytest.mark.it is not used")
     @m.context("but the test name starts with 'test_it_'")
     @m.it("Prettifies the test name into the 'It: ' value")
-    def test_populates_the_it_marker_using_function_name(self):
-        pytest.skip("NotImplemented")
+    def test_populates_the_it_marker_using_function_name(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            def test_it_does_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- ✓ It: Does something*"])
 
     @m.context("When multiple @pytest.mark.it markers are used")
     @m.it("Uses the lowest decorator for the 'It : ' value")
-    def test_uses_the_closest_it_decorator_if_there_are_many(self):
-        pytest.skip("NotImplemented")
+    def test_uses_the_closest_it_decorator_if_there_are_many(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
 
+            pytestmark = [pytest.mark.it("Does something C")]
 
-@m.describe("Unmarked tests")
-class TestUndecoratedTests(object):
-    @m.it("Displays the pytest path for an unmarked test method")
-    def test_undecorated_method(self):
-        pytest.skip("NotImplemented")
-
-    @m.it("Displays the pytest path for an unmarked test function")
-    def test_undecorated_function(self):
-        pytest.skip("NotImplemented")
-
-
-@m.describe("The --collect-only behaviour")
-class TestCollection(object):
-    @m.it("Displays all tests without the result status")
-    def test_no_result_status_is_used(self):
-        pytest.skip("NotImplemented")
+            @pytest.mark.it("Does something B")
+            @pytest.mark.it("Does something A")
+            def test_one():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- ✓ It: Does something A*"])

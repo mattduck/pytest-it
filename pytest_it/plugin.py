@@ -79,23 +79,22 @@ class ItItem(object):
             except IndexError:
                 pass
         if title:
-            if "[" in title:
-                title = title + " - [{}".format(self._item.name.split("[")[1])
-                title = title.capitalize()
-            if self._item.config.option.verbose > 0:
-                title = self.path + "::{} - {}".format(self._item.name, title)
-            title = title
             prefix = "It:"
         else:
             # TODO: don't want to read the docstring
             # TODO: that also applies to CLASS NAMES
-            prefix = "::".join(self._item.nodeid.split("::")[:-1])
+            prefix = ""
             title = self._item.name
-        return "{color}{icon} {prefix}{reset} {title}".format(
+        if self._item.config.option.verbose > 0:
+            title = self.path + "::{} - {}".format(self._item.name, title)
+        if "[" in self._item.nodeid:
+            title = title + " - [{}".format(self._item.name.split("[")[1])
+            title = title.capitalize()
+        return "{color}{icon}{prefix}{reset} {title}".format(
             color=self.color(outcome),
             reset=self.color("reset"),
             icon=icons.get(outcome, "-"),
-            prefix=prefix,
+            prefix=" " + prefix if prefix else "",
             title=title,
         )
 
