@@ -69,23 +69,69 @@ class TestSanity(object):
 @m.describe("The @pytest.mark.describe marker")
 class TestDescribe(object):
     @m.it("Displays a '- Describe: ' block matching the decorator")
-    def test_one_describe(self):
-        pytest.skip("NotImplemented")
+    def test_one_describe(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            @pytest.mark.describe("A foo")
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- Describe: A foo*"])
 
     @m.it("Displays a nested, indented '- Describe: ' block")
-    def test_nested_describe(self):
-        pytest.skip("NotImplemented")
+    def test_nested_describe(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            @pytest.mark.describe("A foo")
+            @pytest.mark.describe("A nested foo")
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(
+            ["*  - Describe: A foo*", "*    - Describe: A nested foo*"]
+        )
 
 
 @m.describe("The @pytest.mark.context marker")
 class TestContext(object):
     @m.it("Displays a '- Context: ' block matching the decorator")
-    def test_one_context(self):
-        pytest.skip("NotImplemented")
+    def test_one_context(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            @pytest.mark.context("When something")
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- Context: When something...*"])
 
     @m.it("Displays a nested, indented '..$context..' block")
-    def test_nested_context(self):
-        pytest.skip("NotImplemented")
+    def test_nested_context(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            @pytest.mark.context("When something")
+            @pytest.mark.context("And when another thing")
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(
+            ["*  - Context: When something...*", "*    - ...and when another thing...*"]
+        )
 
     @m.it("Ignores a @pytest.mark.context decorator that has no argument")
     def test_no_argument(self):
@@ -93,23 +139,71 @@ class TestContext(object):
 
 
 @m.it("Handles indentation for arbitrary Describe and Context nesting")
-def test_deep_nesting_of_context_and_describe():
-    pytest.skip("NotImplemented")
+def test_deep_nesting_of_context_and_describe(testdir):
+    testdir.makepyfile(
+        """
+        import pytest
+
+        @pytest.mark.describe("A thing")
+        @pytest.mark.context("When something")
+        @pytest.mark.context("And when another thing")
+        @pytest.mark.describe("A nested thing")
+        def test_something():
+            assert True
+    """
+    )
+    result = testdir.runpytest("--it-no-color")
+    result.stdout.fnmatch_lines(
+        [
+            "*  - Describe: A thing...*",
+            "*    - Context: When something...*",
+            "*      - ...and when another thing...*",
+            "*        - Describe: A nested thing*",
+        ]
+    )
 
 
 @m.describe("The test function report format")
 class TestIt(object):
     @m.it("Displays a test pass using '- ✓ '")
-    def test_pytest_pass(self):
-        pytest.skip("NotImplemented")
+    def test_pytest_pass(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- ✓ *"])
 
     @m.it("Displays a test fail using '- F '")
-    def test_fail(self):
-        pytest.skip("NotImplemented")
+    def test_fail(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
 
+            def test_something():
+                assert False
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- F *"])
+
+    # TODO: would be nice for this to show the skip message
     @m.it("Displays a test skip using '- s '")
-    def test_skip(self):
-        pytest.skip("NotImplemented")
+    def test_skip(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            def test_something():
+                pytest.skip("Skip reason")
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- s *"])
 
     @m.it("Displays the pytest ID for test parameters at the end of the test")
     def test_param(self):
@@ -117,15 +211,36 @@ class TestIt(object):
 
     @m.context("When @pytest.mark.it is used")
     @m.it("Displays an '- It: ' block matching the decorator")
-    def test_it_decorator(self):
-        pytest.skip("NotImplemented")
+    def test_it_decorator(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            @pytest.mark.it("Does something")
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color")
+        result.stdout.fnmatch_lines(["*- ✓ It: Does something*"])
 
     @m.context("When @pytest.mark.it is used")
     @m.context("When -v is higher than 0")
     @m.parametrize("v", [(1, 2, 3)])
     @m.it("Displays the full module::class::function prefix to the test")
-    def test_verbose(self, v):
-        pytest.skip("NotImplemented")
+    def test_verbose(self, testdir, v):
+        testdir.makepyfile(
+            """
+            import pytest
+
+            @pytest.mark.it("Does something")
+            def test_something():
+                assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color", "-" + ("v" * v))
+        result.stdout.fnmatch_lines(["*- ✓ It: Does something*"])
+        raise NotImplemented
 
     @m.context("When @pytest.mark.it is not used")
     @m.it("Displays the test function name")
