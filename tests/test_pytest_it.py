@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import pytest
+import pytest  # noqa
 from pytest import mark as m
-
-
-pytestmark = [pytest.mark.describe("pytest-it")]
 
 
 @m.describe("The plugin integration with pytest")
