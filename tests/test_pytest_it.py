@@ -70,7 +70,8 @@ class TestSanity(object):
 class TestCollection(object):
     @m.it("Displays all tests without the result status")
     def test_no_result_status_is_used(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             import pytest
 
             @pytest.mark.it("Does something")
@@ -80,9 +81,12 @@ class TestCollection(object):
             @pytest.mark.it("Does something else")
             def test_it_does_something_b():
                 assert True
-        """)
+        """
+        )
         result = testdir.runpytest("--it-no-color", "--collect-only")
-        result.stdout.fnmatch_lines(["*- It: Does something*", "*- It: Does something else*"])
+        result.stdout.fnmatch_lines(
+            ["*- It: Does something*", "*- It: Does something else*"]
+        )
 
 
 @m.describe("The @pytest.mark.describe marker")
@@ -193,7 +197,7 @@ def test_deep_nesting_of_context_and_describe(testdir):
 
 
 @m.describe("The test function report format")
-class TestIt(object):
+class TestTestFormat(object):
     @m.it("Displays a test pass using '- ✓ '")
     def test_pytest_pass(self, testdir):
         testdir.makepyfile(
@@ -236,20 +240,44 @@ class TestIt(object):
 
     @m.it("Displays the pytest ID for parameterised tests")
     def test_param(self, testdir):
-        testdir.makepyfile("""
+        testdir.makepyfile(
+            """
             import pytest
 
             @pytest.mark.parametrize("param", ["a", "b", "c"])
             @pytest.mark.it("Does something")
             def test_something(param):
                 assert True
-        """)
+        """
+        )
         result = testdir.runpytest("--it-no-color")
-        result.stdout.fnmatch_lines([
-            "*- ✓ It: Does something - [a*",
-            "*- ✓ It: Does something - [b*",
-            "*- ✓ It: Does something - [c*",
-        ])
+        result.stdout.fnmatch_lines(
+            [
+                "*- ✓ It: Does something - [a*",
+                "*- ✓ It: Does something - [b*",
+                "*- ✓ It: Does something - [c*",
+            ]
+        )
+
+    @m.it("Does not use the docstring in the test name")
+    @m.parametrize("v", [1, 2, 3])
+    def test_no_docstring(self, testdir, v):
+        testdir.makepyfile(
+            """
+        import pytest
+
+        def test_it_does_something():
+            "A should not appear"
+            assert True
+
+        @pytest.mark.it("Does something else")
+        def test_it_does_something_else():
+            "B should not appear"
+            assert True
+        """
+        )
+        result = testdir.runpytest("--it-no-color", "-" + ("v" * v))
+        assert "should not appear" not in str(result.stdout)
 
     @m.context("When @pytest.mark.it is used")
     @m.it("Displays an '- It: ' block matching the decorator")
@@ -281,21 +309,9 @@ class TestIt(object):
         """
         )
         result = testdir.runpytest("--it-no-color", "-" + ("v" * v))
-        result.stdout.fnmatch_lines(["*- ✓ It: test_verbose.py::test_something - Does something*"])
-
-    @m.context("When @pytest.mark.it is not used")
-    @m.it("Displays the test function name")
-    def test_no_argument(self, testdir):
-        testdir.makepyfile(
-            """
-            import pytest
-
-            def test_something():
-                assert True
-        """
+        result.stdout.fnmatch_lines(
+            ["*- ✓ It: test_verbose.py::test_something - Does something*"]
         )
-        result = testdir.runpytest("--it-no-color")
-        result.stdout.fnmatch_lines(["*- ✓ test_something*"])
 
     @m.context("When @pytest.mark.it is not used")
     @m.it("Displays the test function name")
