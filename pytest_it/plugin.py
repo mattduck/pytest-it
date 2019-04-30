@@ -53,6 +53,7 @@ def pytest_configure(config):
 
 class ItItem(object):
 
+    INDENT = "  "
     COLORS = {
         "reset": "\033[0m",
         "passed": "\033[92m",
@@ -81,7 +82,6 @@ class ItItem(object):
         if title:
             prefix = "It:"
         else:
-            # TODO: don't want to read the docstring
             # TODO: that also applies to CLASS NAMES
             prefix = ""
             title = self._item.name
@@ -123,12 +123,12 @@ class ItItem(object):
             else:
                 value = "- Context: {}...".format(value.capitalize())
 
-        if value_depth < 2:
+        if value_depth <= 3:
             tw.sep(" ")
         if value_depth == 0:
-            tw.line("  " + value)
+            tw.line(self.INDENT + value)
         else:
-            tw.line("  " + ("  " * value_depth) + value)
+            tw.line(self.INDENT + ("  " * value_depth) + value)
 
     def reconcile_and_print(self, prev, tw, outcome):
         if prev:
@@ -163,13 +163,20 @@ class ItItem(object):
                 tw=tw,
             )
 
+        # Print a separator before the test if this test is displayed after a deeper block.
         prev_depth = max(0, (len(prev_marks) - 1))
-        if self_depth < 1 and ((prev_depth >= 1) or prev is None):
+        if self_depth < prev_depth and not diff_broken:
             tw.sep(" ")
+
+        # Print the test with appropriate indent
         if self_depth:
-            tw.line("  " + "  " + ("  " * self_depth) + self.formatted_result(outcome))
+            tw.line(
+                (self.INDENT * 2)
+                + (self.INDENT * self_depth)
+                + self.formatted_result(outcome)
+            )
         else:
-            tw.line("  " + "  " + self.formatted_result(outcome))
+            tw.line((self.INDENT * 2) + self.formatted_result(outcome))
 
     def _uncapitalize(self, s):
         return s[0].lower() + s[1:]
