@@ -125,10 +125,10 @@ class ItItem(object):
 
         if value_depth <= 3:
             tw.sep(" ")
-        if value_depth == 0:
-            tw.line(self.INDENT + value)
+        if value_depth <= 1:
+            tw.line(value)
         else:
-            tw.line(self.INDENT + ("  " * value_depth) + value)
+            tw.line((self.INDENT * (value_depth - 1)) + value)
 
     def reconcile_and_print(self, prev, tw, outcome):
         if prev:
@@ -138,13 +138,13 @@ class ItItem(object):
         depth = defaultdict(int)
         diff_broken = False
         self_depth = 0
-        for self_depth, self_marker_info in enumerate(self.parent_marks):
+        for self_depth, self_marker_info in enumerate(self.parent_marks, 1):
             self_type, self_value = self_marker_info
             depth[self_type] += 1
 
             prev_marker_info = None
             try:
-                prev_marker_info = prev_marks[self_depth]
+                prev_marker_info = prev_marks[self_depth - 1]
             except IndexError:
                 diff_broken = True
             if prev_marker_info != self_marker_info:
@@ -164,19 +164,15 @@ class ItItem(object):
             )
 
         # Print a separator before the test if this test is displayed after a deeper block.
-        prev_depth = max(0, (len(prev_marks) - 1))
+        prev_depth = max(0, (len(prev_marks)))
         if self_depth < prev_depth and not diff_broken:
             tw.sep(" ")
 
         # Print the test with appropriate indent
         if self_depth:
-            tw.line(
-                (self.INDENT * 2)
-                + (self.INDENT * self_depth)
-                + self.formatted_result(outcome)
-            )
+            tw.line((self.INDENT * self_depth) + self.formatted_result(outcome))
         else:
-            tw.line((self.INDENT * 2) + self.formatted_result(outcome))
+            tw.line(self.formatted_result(outcome))
 
     def _uncapitalize(self, s):
         return s[0].lower() + s[1:]

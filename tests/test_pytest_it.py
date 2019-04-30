@@ -116,7 +116,7 @@ class TestDescribe(object):
         )
         result = testdir.runpytest("--it-no-color")
         result.stdout.fnmatch_lines(
-            ["*  - Describe: A foo*", "*    - Describe: A nested foo*"]
+            ["*- Describe: A foo*", "*  - Describe: A nested foo*"]
         )
 
 
@@ -150,7 +150,7 @@ class TestContext(object):
         )
         result = testdir.runpytest("--it-no-color")
         result.stdout.fnmatch_lines(
-            ["*  - Context: When something...*", "*    - ...and when another thing...*"]
+            ["*- Context: When something...*", "*  - ...and when another thing...*"]
         )
 
     @m.it("Ignores a @pytest.mark.context decorator that has no argument")
@@ -185,10 +185,10 @@ def test_deep_nesting_of_context_and_describe(testdir):
     result = testdir.runpytest("--it-no-color")
     result.stdout.fnmatch_lines(
         [
-            "*  - Describe: A thing...*",
-            "*    - Context: When something...*",
-            "*      - ...and when another thing...*",
-            "*        - Describe: A nested thing*",
+            "*- Describe: A thing...*",
+            "*  - Context: When something...*",
+            "*    - ...and when another thing...*",
+            "*      - Describe: A nested thing*",
         ]
     )
 
