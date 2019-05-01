@@ -21,8 +21,8 @@ structure.
 
 One way to improve clarity is to use a BDD testing framework
 (eg. [Behave](https://github.com/behave/behave),
-[Mamba](https://github.com/nestorsalceda/mamba), [Rspec](http://rspec.info), but
-it's not always desirable to rewrite existing test and program code.
+[Mamba](https://github.com/nestorsalceda/mamba), [Rspec](http://rspec.info)), but
+it's not always desirable to restructure existing test and program code.
 
 There are some pytest plugins that attempt to bridge this gap, by providing
 alternative ways to structure the tests (eg. [pytest-describe](https://github.com/ropez/pytest-describe), [pytest-bdd](https://github.com/pytest-dev/pytest-bdd)), or
