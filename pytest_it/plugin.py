@@ -87,7 +87,7 @@ class ItItem(object):
             title = self._item.name
         if self._item.config.option.verbose > 0:
             title = self.path + "::{} - {}".format(self._item.name, title)
-        if "[" in self._item.nodeid:
+        if "[" in self._item.name:
             title = title + " - [{}".format(self._item.name.split("[")[1])
             title = title.capitalize()
         return "{color}{icon}{prefix}{reset} {title}".format(
