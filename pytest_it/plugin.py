@@ -68,6 +68,9 @@ class ItItem(object):
     @property
     def path(self):
         """ Path to the test """
+
+        # TODO: docstrings show up in the path. This is used for verbose mode. Should only show
+        # the actual path without docstrings.
         return "::".join(self._item.nodeid.split("::")[:-1])
 
     def formatted_result(self, outcome):
