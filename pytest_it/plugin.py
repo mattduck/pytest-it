@@ -128,11 +128,12 @@ class ItItem(object):
         else:
             tw.line((self.INDENT * (value_depth - 1)) + value)
 
-    def reconcile_and_print(self, prev, tw, outcome):
+    def reconcile_and_print(self, prev, tw, outcome, is_first_test=False):
         if prev:
             prev_marks = prev.parent_marks
+            is_first_module_test = self._item.module != prev._item.module
         else:
-            prev_marks = []
+            prev_marks, is_first_module_test = [], True
         depth = defaultdict(int)
         diff_broken = False
         self_depth = 0
@@ -164,6 +165,10 @@ class ItItem(object):
         # Print a separator before the test if this test is displayed after a deeper block.
         prev_depth = max(0, (len(prev_marks)))
         if self_depth < prev_depth and not diff_broken:
+            tw.sep(" ")
+        # If this is a new module, add a separate to avoid printing "* my_module.py... It: does something"
+        # on a single line.
+        elif self_depth == 0 and is_first_module_test:
             tw.sep(" ")
 
         # Print the test with appropriate indent
