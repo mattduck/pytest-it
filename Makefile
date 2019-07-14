@@ -3,7 +3,8 @@
 SHELL := /bin/bash
 
 bootstrap:
-	pip install black flake8 tox
+	pip install flake8 tox
+	pip install black 2>/dev/null
 
 build:
 	python setup.py sdist bdist_wheel
@@ -20,7 +21,7 @@ test:
 lint: _lintblack _lintflake8
 
 _lintblack:
-	set -o pipefail && black src --check 2>&1 | sed "s/^/[black] /"
+	set -o pipefail && which black && black src --check 2>&1 | sed "s/^/[black] /"
 
 _lintflake8:
 	set -o pipefail && flake8 src tests | sed "s/^/[flake8] /"
