@@ -281,4 +281,4 @@ class ItTerminalReporter(TerminalReporter):
                 fspath = self.startdir.bestrelpath(fspath)
                 self._tw.line()
                 self._tw.line()
-                self._tw.write("* " + fspath + " ")
+                self._tw.write("* " + fspath + "... ")
