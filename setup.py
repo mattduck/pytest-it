@@ -1,45 +1,79 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 import codecs
-from setuptools import setup
+import os
+import re
+
+from setuptools import setup, find_packages
 
 
-def read(fname):
-    file_path = os.path.join(os.path.dirname(__file__), fname)
-    return codecs.open(file_path, encoding="utf-8").read()
+###################################################################
+
+NAME = "pytest-it"
+PACKAGES = find_packages(where="src")
+ENTRY_POINTS = {"pytest11": ["it = pytest_it.plugin"]}
+META_PATH = os.path.join("src", "pytest_it", "__init__.py")
+KEYWORDS = ["pytest", "pytest-it", "test", "bdd", "rspec", "org-mode", "markdown"]
+CLASSIFIERS = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "License :: OSI Approved :: MIT License",
+]
+INSTALL_REQUIRES = []
+
+###################################################################
+
+HERE = os.path.abspath(os.path.dirname(__file__))
 
 
-setup(
-    name="pytest-it",
-    version="0.1",
-    description="Display pytest test reports as a plaintext spec, inspired by RSpec",
-    long_description=read("README.md"),
-    author="Matt Duck",
-    author_email="matt@mattduck.com",
-    maintainer="Matt Duck",
-    maintainer_email="matt@mattduck.com",
-    url="https://github.com/Ometria/pytest-it",
-    keywords="pytest pytest-it test bdd rspec org-mode",
-    license="MIT",
-    python_requires=">=2.7",
-    install_requires=["pytest>=3.6.0"],
-    packages=["pytest_it"],
-    entry_points={"pytest11": ["it = pytest_it.plugin"]},
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Framework :: Pytest",
-        "Intended Audience :: Developers",
-        "Topic :: Software Development :: Testing",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Operating System :: OS Independent",
-        "License :: OSI Approved :: MIT License",
-    ],
-)
+def read(*parts):
+    """
+    Build an absolute path from *parts* and and return the contents of the
+    resulting file.  Assume UTF-8 encoding.
+    """
+    with codecs.open(os.path.join(HERE, *parts), "rb", "utf-8") as f:
+        return f.read()
+
+
+META_FILE = read(META_PATH)
+
+
+def find_meta(meta):
+    """
+    Extract __*meta*__ from META_FILE.
+    """
+    meta_match = re.search(
+        r"^__{meta}__ = ['\"]([^'\"]*)['\"]".format(meta=meta), META_FILE, re.M
+    )
+    if meta_match:
+        return meta_match.group(1)
+    raise RuntimeError("Unable to find __{meta}__ string.".format(meta=meta))
+
+
+if __name__ == "__main__":
+    setup(
+        name=NAME,
+        description=find_meta("description"),
+        license=find_meta("license"),
+        url=find_meta("uri"),
+        version=find_meta("version"),
+        author=find_meta("author"),
+        author_email=find_meta("email"),
+        maintainer=find_meta("author"),
+        maintainer_email=find_meta("email"),
+        keywords=KEYWORDS,
+        long_description=read("README.md"),
+        packages=PACKAGES,
+        package_dir={"": "src"},
+        zip_safe=False,
+        classifiers=CLASSIFIERS,
+        install_requires=INSTALL_REQUIRES,
+        entry_points=ENTRY_POINTS,
+    )

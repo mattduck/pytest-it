@@ -1,2 +1,6 @@
 coverage
 pytest>=3.6
+flake8
+twine
+requests
+tox
