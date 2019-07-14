@@ -27,14 +27,6 @@ jobs:
     env: TOXENV=py27
     script: make test
   - stage: test
-    python: '3.4'
-    env: TOXENV=py34
-    script: make test
-  - stage: test
-    python: '3.5'
-    env: TOXENV=py35
-    script: make test
-  - stage: test
     python: '3.6'
     env: TOXENV=py36
     script: make test
