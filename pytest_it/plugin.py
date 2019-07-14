@@ -220,6 +220,9 @@ def pytest_collection_modifyitems(items):
 
 
 class ItTerminalReporter(TerminalReporter):
+
+    _current_pytest_it_fspath = None
+
     def __init__(self, config, file=None):
         TerminalReporter.__init__(self, config, file)
         self._prev_item = None
@@ -267,4 +270,15 @@ class ItTerminalReporter(TerminalReporter):
         """
         if self.showfspath:
             fsid = nodeid.split("::")[0]
-            self.write_fspath_result("* " + fsid + "... ", "")
+            # below logic is very similar to self.write_fspath_result(). Ideally we would
+            # call it directly, but there's no way to inject the "*" character before the
+            # path.
+            fspath = self.config.rootdir.join(fsid)
+            if fspath != self.currentfspath:
+                if self.currentfspath is not None and self._show_progress_info:
+                    self._write_progress_information_filling_space()
+                self.currentfspath = fspath
+                fspath = self.startdir.bestrelpath(fspath)
+                self._tw.line()
+                self._tw.line()
+                self._tw.write("* " + fspath + " ")
