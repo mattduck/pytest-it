@@ -27,7 +27,7 @@ jobs:
     script: make test
   - stage: release
     python: 3.6
-    script: skip
+    script: skip  # Only run the deploy step
     before_install: skip
     after_success: skip
     before_deploy:
@@ -37,19 +37,17 @@ jobs:
     - git config --global user.email "builds@travis-ci.com"
     - git config --global user.name "Travis CI"
     - pip install -r dev-requirements.txt
-    - git status
+    - git status  # For debugging
     deploy:
       provider: script
-      script: make release && git push --quiet https://mattduck:$GITHUB_TAG_TOKEN@github.com/mattduck/pytest-it.git
-        --tags >/dev/null 2>&1
+      script: make release && git push --quiet https://mattduck:$GITHUB_TAG_TOKEN@github.com/mattduck/pytest-it.git --tags >/dev/null 2>&1
       on:
         branch: master
         tags: false
-        condition: "`make assert_clean_git assert_new_pypi_version >/dev/null 2>/dev/null;
-          echo $?` == 0\n"
+        condition: >
+          `make assert_clean_git assert_new_pypi_version >/dev/null 2>/dev/null; echo $?` == 0
     after_deploy: pip install pytest-it --upgrade
     env:
-    global:
-    - secure: Gc4kUgf70OiKTvTOr0rNi0AyOjKps3JUVpHcDxQXFtRPZjsFhOu4qGWxUo41Ro69kPeuQplqtn8U6FpEy+pICdN28WqDjuGyP8rKvpK4IQwBaZnCei3eAf6s/zZ8k1vDE0bRcWJjAXqkpt86tr9Z0tSJFJAQp+NK9iEqJGmOpmV9Svyy3AjueaRE5HnbgF/X3NrRBS+BqkpM1Gdg4+sawTearH358N6Y9Y60+cIvVwfomoV9LpElvPG+RZ0QnZa8zm6LSijC89W95gSY13Cxhr1eLa8p8/awrm8Usw34AvjnKBr9qy4ijCczIJbW0q9pFD4NLSRfyQxl4DPgXI7gUbkOrnuJZGBzjpFtOSYSPOTa4KDJKmOHm09FPbviETeoS7WkyJg6wr7BlgCCpTRSrXKRO9krSg8M5XOV6JgsgUkJlt9b8PRtjyOvmGX+HjlGK3/jmZqdaH/iH05fb+YIkQicwwe31nF/B7s/0A6ukEqsFf8n5FsvH9SIN19fxbhUxp3xE33Pk9kM6xEVfwv0C9caYYImTQeX3cjPDa0FtI/qRM13wFCXCJxl0uVNqNjf9zhDeJSMMAHXria3B+IMON+nsguZZI12yg5HS/LA5Pp13BoaH0AeKqs6Q6yGAz5kcPGKHqDmOC5Wmzk6oKZrNIgiUMShcgOIk6y1zSPc6cg=
-    - secure: Yrwykc4Ca8J1R3kjAOZ7YMzsfkz8WOTu1K/BG6WnjJDZGyep0Bh5YXUXGKApyz0EuqXjX+ovVJPBBFo7BqL6NhNjDjtl5rKXAnwNvll4mQ/Xe0k607yHF9LZrGZEBkbAaUKvf9t6x/6rB1X7G+tSx7VS7RscYRH4FBXOxHLhgRAI3J46BvqP5IIyd1XROIhb1zofbkRkxXKBf2lLkQV/z4NODWxkCeHyjrRVFZcuy74eS2adx7xUAoUmKYSmlIf6BLSWJap0+lPd/ciD/3UiVnu76aQqHQmz3tJGrAjSdH9K06GJDIpLHF+KAqHBqXKstQAz521E4TzzuWprzOOYzJmq5nz7NagpvrumEEkaJg5JKErDFMETlSib5XOOMmwwF8BBQva/xsH+lkxNq1FQ1gjBRYw7oV/IMussKgZOeGfaJ/OidFh0sYrIZJZoNbrrq7+dH6blsXm/3Xe31hFETcFVzlJA9T8JGJ3AjWORmUw8FGuLW+6BZ9nzcfi3aPU+iakzD7wgX6xILZtXAolBE5OygUaAjFimu0kEDF++fRAlJAyP3tv34q5lQ3QIBiDA8Ij6r9mtuwbYw3NO1mmYJ1Nk64+uqRsnGm9PEx82+mvHXqydrTVomDNSPTCPx3UokRDS2YR5u/v67VNb4Q5KBT+2GiWaoqd7xHF1sQ5ZRsQ=
-    - secure: nWSghMnPhrr1W+uDbyv7baGx9tDpEGdXEDrsGKFhziksFSRkb3aBD6iUJLAeurK6cqo9d5qsc1ZxYIx3OIGh24hCHwKuYWrjY3V30h0pFpthlI/sn7TAui0k4Vvkzg0u3G2u4XqhJ44HyalNnTrINM0ZjBWch0wnSoWiWQXSQcaGehgoLlrA91tXrIukq0dOIdv4DkRVCxaXvUKv6xKIFX0lT+uKSRF0ZlILHDndXXpJ8JLAquk36m8Ah0DS0uXtVIy/WQm3jrodnr51kHWCIl3rLoAlivw+nkeyPkikgCkcU7TgZVOXN5XRf7isWXyxOscj2/n1EwsFULPHrt5jR2KhNfYrKUlNxb204+zlOwY6Y+bLSOGllUf69l3Cdmu4BakApFj8NlxNdCsEzZ0YqayF4OFN/YND84lerZ4Dq5hGqlYkd+/g3ZG7+PuAK1Q52iwYoTjNczE3SgdA0uBaUD8yOaMUTU8CuJA7I+JrgTFrs3BPV/ru3bYSWx0GxPM1IXgG4O+NfOBYmyOxJQbTWKWmOA3cFu59+NJ9jSnAscnzgnWwgJThILNNG94ceGyodzcAtOJZyRmCULrvugwtXXGOYUpDKUo2piiZADrkXIcjjQFoY23gikYnzVW4KXdyBpRhV0vuEvC8JYac3go8icrOmHXOl0/V1x/FTVPBPL4=
+      - secure: "Gc4kUgf70OiKTvTOr0rNi0AyOjKps3JUVpHcDxQXFtRPZjsFhOu4qGWxUo41Ro69kPeuQplqtn8U6FpEy+pICdN28WqDjuGyP8rKvpK4IQwBaZnCei3eAf6s/zZ8k1vDE0bRcWJjAXqkpt86tr9Z0tSJFJAQp+NK9iEqJGmOpmV9Svyy3AjueaRE5HnbgF/X3NrRBS+BqkpM1Gdg4+sawTearH358N6Y9Y60+cIvVwfomoV9LpElvPG+RZ0QnZa8zm6LSijC89W95gSY13Cxhr1eLa8p8/awrm8Usw34AvjnKBr9qy4ijCczIJbW0q9pFD4NLSRfyQxl4DPgXI7gUbkOrnuJZGBzjpFtOSYSPOTa4KDJKmOHm09FPbviETeoS7WkyJg6wr7BlgCCpTRSrXKRO9krSg8M5XOV6JgsgUkJlt9b8PRtjyOvmGX+HjlGK3/jmZqdaH/iH05fb+YIkQicwwe31nF/B7s/0A6ukEqsFf8n5FsvH9SIN19fxbhUxp3xE33Pk9kM6xEVfwv0C9caYYImTQeX3cjPDa0FtI/qRM13wFCXCJxl0uVNqNjf9zhDeJSMMAHXria3B+IMON+nsguZZI12yg5HS/LA5Pp13BoaH0AeKqs6Q6yGAz5kcPGKHqDmOC5Wmzk6oKZrNIgiUMShcgOIk6y1zSPc6cg="
+      - secure: "Yrwykc4Ca8J1R3kjAOZ7YMzsfkz8WOTu1K/BG6WnjJDZGyep0Bh5YXUXGKApyz0EuqXjX+ovVJPBBFo7BqL6NhNjDjtl5rKXAnwNvll4mQ/Xe0k607yHF9LZrGZEBkbAaUKvf9t6x/6rB1X7G+tSx7VS7RscYRH4FBXOxHLhgRAI3J46BvqP5IIyd1XROIhb1zofbkRkxXKBf2lLkQV/z4NODWxkCeHyjrRVFZcuy74eS2adx7xUAoUmKYSmlIf6BLSWJap0+lPd/ciD/3UiVnu76aQqHQmz3tJGrAjSdH9K06GJDIpLHF+KAqHBqXKstQAz521E4TzzuWprzOOYzJmq5nz7NagpvrumEEkaJg5JKErDFMETlSib5XOOMmwwF8BBQva/xsH+lkxNq1FQ1gjBRYw7oV/IMussKgZOeGfaJ/OidFh0sYrIZJZoNbrrq7+dH6blsXm/3Xe31hFETcFVzlJA9T8JGJ3AjWORmUw8FGuLW+6BZ9nzcfi3aPU+iakzD7wgX6xILZtXAolBE5OygUaAjFimu0kEDF++fRAlJAyP3tv34q5lQ3QIBiDA8Ij6r9mtuwbYw3NO1mmYJ1Nk64+uqRsnGm9PEx82+mvHXqydrTVomDNSPTCPx3UokRDS2YR5u/v67VNb4Q5KBT+2GiWaoqd7xHF1sQ5ZRsQ="
+      - secure: "nWSghMnPhrr1W+uDbyv7baGx9tDpEGdXEDrsGKFhziksFSRkb3aBD6iUJLAeurK6cqo9d5qsc1ZxYIx3OIGh24hCHwKuYWrjY3V30h0pFpthlI/sn7TAui0k4Vvkzg0u3G2u4XqhJ44HyalNnTrINM0ZjBWch0wnSoWiWQXSQcaGehgoLlrA91tXrIukq0dOIdv4DkRVCxaXvUKv6xKIFX0lT+uKSRF0ZlILHDndXXpJ8JLAquk36m8Ah0DS0uXtVIy/WQm3jrodnr51kHWCIl3rLoAlivw+nkeyPkikgCkcU7TgZVOXN5XRf7isWXyxOscj2/n1EwsFULPHrt5jR2KhNfYrKUlNxb204+zlOwY6Y+bLSOGllUf69l3Cdmu4BakApFj8NlxNdCsEzZ0YqayF4OFN/YND84lerZ4Dq5hGqlYkd+/g3ZG7+PuAK1Q52iwYoTjNczE3SgdA0uBaUD8yOaMUTU8CuJA7I+JrgTFrs3BPV/ru3bYSWx0GxPM1IXgG4O+NfOBYmyOxJQbTWKWmOA3cFu59+NJ9jSnAscnzgnWwgJThILNNG94ceGyodzcAtOJZyRmCULrvugwtXXGOYUpDKUo2piiZADrkXIcjjQFoY23gikYnzVW4KXdyBpRhV0vuEvC8JYac3go8icrOmHXOl0/V1x/FTVPBPL4="
