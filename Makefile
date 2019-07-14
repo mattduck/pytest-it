@@ -3,7 +3,7 @@
 SHELL := /bin/bash
 
 bootstrap:
-	pip install flake8 tox
+	pip install flake8 tox requests
 	pip install black || echo "Error installing black"
 
 build:
