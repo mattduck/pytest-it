@@ -28,7 +28,6 @@ jobs:
   - stage: release
     python: 3.6
     script: skip  # Only run the deploy step
-    before_install: make assert_clean_git assert_new_pypi_version
     after_success: skip
     before_deploy:
     - if [ -z "$TWINE_USERNAME" ]; then echo "TWINE_USERNAME not set, exiting." && exit 1; fi
