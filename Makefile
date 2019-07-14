@@ -4,7 +4,7 @@ SHELL := /bin/bash
 
 bootstrap:
 	pip install flake8 tox
-	pip install black 2>/dev/null
+	pip install black || echo "Error installing black"
 
 build:
 	python setup.py sdist bdist_wheel
