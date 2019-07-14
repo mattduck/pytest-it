@@ -1,5 +1,7 @@
 .PHONY: bootstrap install test lint _lintblack _lintflake8 build clean assert_new_pypi_version assert_clean_git
 
+SHELL := /bin/bash
+
 bootstrap:
 	pip install black flake8 tox
 
