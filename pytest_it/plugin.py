@@ -87,9 +87,14 @@ class ItItem(object):
         else:
             prefix = ""
             title = self._item.name
+        try:
+            if "[doctest]" in self._item.location[-1]:
+                title = self._item.name + " - [doctest]"
+        except IndexError:
+            pass
         if self._item.config.option.verbose > 0:
             title = self.path + "::{} - {}".format(self._item.name, title)
-        if "[" in self._item.name:
+        if "[" in self._item.name:  # Parametrised test
             title = title + " - [{}".format(self._item.name.split("[")[1])
         return "{color}{icon}{prefix}{reset} {title}".format(
             color=self.color(outcome),
@@ -131,10 +136,19 @@ class ItItem(object):
         else:
             tw.line((self.INDENT * (value_depth - 1)) + value)
 
+    @property
+    def module(self):
+        try:
+            return self._item.module
+        except AttributeError:
+            # a DocTestItem doesn't have a module attribute, but the parent
+            # does
+            return self._item.parent.module
+
     def reconcile_and_print(self, prev, tw, outcome, is_first_test=False):
         if prev:
             prev_marks = prev.parent_marks
-            is_first_module_test = self._item.module != prev._item.module
+            is_first_module_test = self.module != prev.module
         else:
             prev_marks, is_first_module_test = [], True
         depth = defaultdict(int)
