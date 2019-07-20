@@ -1,6 +1,8 @@
 pytest-it
 =========
 
+|PyPI|  |Travis|
+
 Decorate your pytest suite with RSpec-inspired markers ``describe``, ``context`` and
 ``it``. Then run ``pytest --it`` to see a plaintext, org-mode compatible spec of the
 test structure.
@@ -127,3 +129,9 @@ features, such as:
 Although ``pytest-it`` does not change the behaviour of pytest tests, you may find it
 a useful tool for thinking about test structure, and communicating the intention
 of both the test code and the system under test.
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/pytest-it.svg
+   :target: https://pypi.python.org/pypi/pytest-it
+
+.. |Travis| image:: https://travis-ci.org/mattduck/pytest-it.svg?branch=master
+   :target: https://travis-ci.org/mattduck/pytest-it
