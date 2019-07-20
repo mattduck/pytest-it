@@ -21,7 +21,6 @@ Examples
 A basic example that uses ``pytest.mark.describe``, ``pytest.mark.context`` and ``pytest.mark.it``:
 
 .. code-block:: python
-    :emphasize-lines: 3,6,7
 
     from pytest import mark as m
 
@@ -34,16 +33,17 @@ A basic example that uses ``pytest.mark.describe``, ``pytest.mark.context`` and 
             pass
 
 This produces::
-    - Describe: The test function report format...
 
-      - Context: When @pytest.mark.it is used...
-          - ✓ It: Displays an '- It: ' block matching the decorator
+  - Describe: The test function report format...
+
+    - Context: When @pytest.mark.it is used...
+        - ✓ It: Displays an '- It: ' block matching the decorator
 
 
-``Describe`` and ``Context`` blocks can be nested arbitrarily by using multiple markers:
+``Describe`` and ``Context`` blocks can be nested arbitrarily by using multiple
+markers, eg:
 
 .. code-block:: python
-    :emphasize-lines: 3,11,12,13
 
     from pytest import mark as m
 
@@ -61,14 +61,15 @@ This produces::
         def test_populates_the_it_marker_using_function_name(self, testdir):
             pass
 
-The output ::
-    - Describe: The test function report format...
+This produces::
 
-      - Context: When @pytest.mark.it is not used...
-          - ✓ It: Displays the test function name
+  - Describe: The test function report format...
 
-          - ...but the test name starts with 'test_it_'...
-          - ✓ It: Prettifies the test name into the 'It: ' value
+    - Context: When @pytest.mark.it is not used...
+        - ✓ It: Displays the test function name
+
+        - ...but the test name starts with 'test_it_'...
+        - ✓ It: Prettifies the test name into the 'It: ' value
 
 
 Behaviour
