@@ -99,8 +99,8 @@ Behaviour
 Background
 -----------
 
-Pytest provides a lot of useful features for testing in Python, but for some
-complex systems, it can be hard to clearly communicate the intent of our tests
+Pytest provides a lot of useful features for testing in Python, but when testing
+complex systems, it can be hard to clearly communicate the intent of a test
 using the standard ``test_module.py::TestClass::test_function`` structure.
 
 One way to improve clarity is to use a BDD testing framework
@@ -111,7 +111,7 @@ it's not always desirable to restructure existing test and program code.
 There are some pytest plugins that attempt to bridge this gap, by providing
 alternative ways to structure the tests (eg. `pytest-describe
 <https://github.com/ropez/pytest-describe>`_, `pytest-bdd <https://github.com/pytest-dev/pytest-bdd>`_), or
-altering the test report output (eg. `pytest-testdox <https://github.com/renanivo/pytest-testdox>`_), `pytest-pspec <https://github.com/gowtham-sai/pytest-pspec>`_)).
+altering the test report output (eg. `pytest-testdox <https://github.com/renanivo/pytest-testdox>`_), `pytest-pspec <https://github.com/gowtham-sai/pytest-pspec>`_).
 
 ``pytest-it`` takes a similar approach to ``pytest-testdox``, by providing pytest
 markers that can describe the test output. ``pytest-it`` supports a few other
