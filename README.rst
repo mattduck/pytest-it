@@ -3,7 +3,7 @@ pytest-it
 
 |PyPI|  |Travis|
 
-Decorate your pytest suite with RSpec-inspired markers ``describe``, ``context`` and
+Decorate your pytest suite with `RSpec-inspired <rspec.info>`_ markers ``describe``, ``context`` and
 ``it``. Then run ``pytest --it`` to see a plaintext, org-mode compatible spec of the
 test structure.
 
