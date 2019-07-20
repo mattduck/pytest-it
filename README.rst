@@ -12,7 +12,7 @@ test structure.
 Install
 -------
 
-Pytest-it is `available on PyPi <https://pypi.org/project/pytest-it/>`_: ``pip install pytest-it``.
+``pytest-it`` is `available on PyPi <https://pypi.org/project/pytest-it/>`_: ``pip install pytest-it``.
 
 
 Examples
@@ -81,7 +81,7 @@ Behaviour
 
 - ``Describe`` and ``Context`` can be nested arbitrarily.
 
-- If ``--collect-only`` is used, it displays the same pytest-it spec as usual, but
+- If ``--collect-only`` is used, it displays the same ``pytest-it`` spec as usual, but
   without the test result (✓/F/s).
 
 - If ``-v`` is higher than 0, the full path to the test function is include in the
@@ -91,7 +91,7 @@ Behaviour
   of the ``It: does something`` output.
 
 - If ``pytest.mark.it`` is not used but the test name starts with ``test_it``,
-  pytest-it will prettify the test name into an ``It: does something`` value.
+  ``pytest-it`` will prettify the test name into an ``It: does something`` value.
 
 - The test output should be able to be copied directly into an `org-mode <https://orgmode.org/>`_ file.
 
@@ -121,7 +121,7 @@ features, such as:
 - Arbitrary nesting of ``describe`` and ``context`` markers.
 - Supporting the ``--collect-only`` pytest flag to display test structure.
 - Displaying the full path to each test if ``-v`` is used.
-- Neatly integrating tests in the output if they don't use the pytest-it
+- Neatly integrating tests in the output if they don't use the ``pytest-it``
   markers.
 
 Although ``pytest-it`` does not change the behaviour of pytest tests, you may find it
