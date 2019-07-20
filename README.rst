@@ -39,7 +39,7 @@ This produces::
   - Describe: The test function report format...
 
     - Context: When @pytest.mark.it is used...
-        - ✓ It: Displays an '- It: ' block matching the decorator
+      - ✓ It: Displays an '- It: ' block matching the decorator
 
 
 ``Describe`` and ``Context`` blocks can be nested arbitrarily by using multiple
@@ -68,9 +68,9 @@ This produces::
   - Describe: The test function report format...
 
     - Context: When @pytest.mark.it is not used...
-        - ✓ It: Displays the test function name
+      - ✓ It: Displays the test function name
 
-        - ...but the test name starts with 'test_it_'...
+      - ...but the test name starts with 'test_it_'...
         - ✓ It: Prettifies the test name into the 'It: ' value
 
 
