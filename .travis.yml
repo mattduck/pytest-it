@@ -30,6 +30,8 @@ jobs:
     script: skip  # Only run the deploy step
     after_success: skip
     before_deploy:
+    - make assert_clean_git || echo "Dirty git index, exiting" && exit 1
+    - make assert_new_pypi_version || echo "No PyPI release needed, exiting" && exit 0
     - if [ -z "$TWINE_USERNAME" ]; then echo "TWINE_USERNAME not set, exiting." && exit 1; fi
     - if [ -z "$TWINE_PASSWORD" ]; then echo "TWINE_PASSWORD not set, exiting." && exit 1; fi
     - if [ -z "$GITHUB_TAG_TOKEN" ]; then echo "GITHUB_TAG_TOKEN not set, exiting." && exit 1; fi
@@ -43,8 +45,6 @@ jobs:
       on:
         branch: master
         tags: false
-        condition: >
-          `make assert_clean_git assert_new_pypi_version; echo $?` == 0
     after_deploy: pip install pytest-it --upgrade
     env:
       - secure: "Gc4kUgf70OiKTvTOr0rNi0AyOjKps3JUVpHcDxQXFtRPZjsFhOu4qGWxUo41Ro69kPeuQplqtn8U6FpEy+pICdN28WqDjuGyP8rKvpK4IQwBaZnCei3eAf6s/zZ8k1vDE0bRcWJjAXqkpt86tr9Z0tSJFJAQp+NK9iEqJGmOpmV9Svyy3AjueaRE5HnbgF/X3NrRBS+BqkpM1Gdg4+sawTearH358N6Y9Y60+cIvVwfomoV9LpElvPG+RZ0QnZa8zm6LSijC89W95gSY13Cxhr1eLa8p8/awrm8Usw34AvjnKBr9qy4ijCczIJbW0q9pFD4NLSRfyQxl4DPgXI7gUbkOrnuJZGBzjpFtOSYSPOTa4KDJKmOHm09FPbviETeoS7WkyJg6wr7BlgCCpTRSrXKRO9krSg8M5XOV6JgsgUkJlt9b8PRtjyOvmGX+HjlGK3/jmZqdaH/iH05fb+YIkQicwwe31nF/B7s/0A6ukEqsFf8n5FsvH9SIN19fxbhUxp3xE33Pk9kM6xEVfwv0C9caYYImTQeX3cjPDa0FtI/qRM13wFCXCJxl0uVNqNjf9zhDeJSMMAHXria3B+IMON+nsguZZI12yg5HS/LA5Pp13BoaH0AeKqs6Q6yGAz5kcPGKHqDmOC5Wmzk6oKZrNIgiUMShcgOIk6y1zSPc6cg="
