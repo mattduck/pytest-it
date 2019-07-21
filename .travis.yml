@@ -17,10 +17,10 @@ jobs:
   - stage: lint
     python: '3.6'
     script: make lint
-  - stage: test
-    python: '2.7'
-    env: TOXENV=py27
-    script: make test
+  # - stage: test
+  #   python: '2.7'
+  #   env: TOXENV=py27
+  #   script: make test
   - stage: test
     python: '3.6'
     env: TOXENV=py36
