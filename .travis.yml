@@ -33,7 +33,7 @@ jobs:
     - if [ -z "$TWINE_USERNAME" ]; then echo "TWINE_USERNAME not set, exiting." && exit 1; fi
     - if [ -z "$TWINE_PASSWORD" ]; then echo "TWINE_PASSWORD not set, exiting." && exit 1; fi
     - if [ -z "$GITHUB_TAG_TOKEN" ]; then echo "GITHUB_TAG_TOKEN not set, exiting." && exit 1; fi
-    - make assert_new_pypi_version || echo "No PyPI release needed, exiting" && exit 0
+    - make assert_new_pypi_version || exit 0
     - git config --global user.email "builds@travis-ci.com"
     - git config --global user.name "Travis CI"
     - pip install -r dev-requirements.txt
