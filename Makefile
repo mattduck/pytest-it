@@ -31,14 +31,14 @@ format:
 
 release: clean lint test build assert_clean_git assert_new_pypi_version
 	twine upload dist/"$$(python setup.py --name)"*
-	git tag "v$$(python setup.py --version)"
+	git tag "$$(python setup.py --version)"
 	echo "Release successful. You probably want to push the new git tag."
 
 assert_new_pypi_version:
 	python3 -c "$$PYSCRIPT_ASSERT_NEW_VERSION"
 
 assert_clean_git:
-	if [ "$$(git status --porcelain)" != "" ]; then echo "Dirty git index, exiting." && exit 1; fi
+	if [ "$$TRAVIS" = "true" ]; then exit 0; elif [ "$$(git status --porcelain)" != "" ]; then echo "Dirty git index, exiting." && exit 1; fi
 
 
 # PYSCRIPT_ASSERT_NEW_VERSION ------------------------------
