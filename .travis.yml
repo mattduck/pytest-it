@@ -41,7 +41,7 @@ jobs:
     - git status  # For debugging
     deploy:
       provider: script
-      script: make release && git push --quiet https://mattduck:$GITHUB_TAG_TOKEN@github.com/mattduck/pytest-it.git --tags >/dev/null 2>&1
+      script: make release && git push --quiet https://mattduck:$GITHUB_TAG_TOKEN@github.com/mattduck/pytest-it.git --tags
       on:
         branch: master
         tags: false
