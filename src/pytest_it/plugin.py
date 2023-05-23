@@ -255,7 +255,7 @@ class ItTerminalReporter(TerminalReporter):
 
         # NOTE: this logic is copied from TerminalReporter.pytest_collection_finish
         lines = self.config.hook.pytest_report_collectionfinish(
-            config=self.config, startdir=self.startdir, items=session.items
+            config=self.config, start_path=self.startdir, items=session.items
         )
         self._write_report_lines_from_hooks(lines)
         if self.config.getoption("collectonly"):
