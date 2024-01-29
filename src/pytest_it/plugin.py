@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import pathlib
 from collections import defaultdict
 
 import pytest
@@ -69,7 +68,7 @@ class ItItem(object):
 
     @property
     def path(self):
-        """ Path to the test """
+        """Path to the test"""
 
         # TODO: docstrings show up in the path. This is used for verbose mode. Should only show
         # the actual path without docstrings.
