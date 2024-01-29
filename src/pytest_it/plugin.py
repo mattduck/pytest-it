@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import pathlib
 from collections import defaultdict
 
 import pytest
+from _pytest.pathlib import bestrelpath
 from _pytest.terminal import TerminalReporter
 
 REGISTERED = False
@@ -27,7 +29,7 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.mark.trylast
+@pytest.hookimpl(trylast=True)
 def pytest_configure(config):
     global REGISTERED
     if (config.option.it or (config.option.it_color is False)) and not REGISTERED:
@@ -255,7 +257,7 @@ class ItTerminalReporter(TerminalReporter):
 
         # NOTE: this logic is copied from TerminalReporter.pytest_collection_finish
         lines = self.config.hook.pytest_report_collectionfinish(
-            config=self.config, start_path=self.startdir, items=session.items
+            config=self.config, start_path=self.startpath, items=session.items
         )
         self._write_report_lines_from_hooks(lines)
         if self.config.getoption("collectonly"):
@@ -273,12 +275,12 @@ class ItTerminalReporter(TerminalReporter):
             # below logic is very similar to self.write_fspath_result(). Ideally we would
             # call it directly, but there's no way to inject the "*" character before the
             # path.
-            fspath = self.config.rootdir.join(fsid)
+            fspath = self.config.rootpath / fsid
             if fspath != self.currentfspath:
                 if self.currentfspath is not None and self._show_progress_info:
                     self._write_progress_information_filling_space()
                 self.currentfspath = fspath
-                fspath = self.startdir.bestrelpath(fspath)
+                fspath = bestrelpath(self.startpath, fspath)
                 self._tw.line()
                 self._tw.line()
                 self._tw.write("* " + fspath + "... ")
